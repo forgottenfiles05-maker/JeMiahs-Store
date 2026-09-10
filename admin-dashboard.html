@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JeMiahŝ Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="admin-shell">
+  <aside class="admin-nav">
+    <h2>JeMiahŝ</h2>
+    <button class="nav-item active" data-tab="products">Products</button>
+    <button class="nav-item" data-tab="orders">Orders</button>
+    <button class="nav-item" data-tab="customers">Customers</button>
+    <button class="nav-item" data-tab="design">Site Design</button>
+    <button class="nav-item" data-tab="settings">Store Settings</button>
+    <button class="nav-item" data-tab="integrations">Integrations</button>
+    <button class="nav-item" data-tab="ai">AI Assistant</button>
+    <button class="logout-btn" id="logoutBtn">Log Out</button>
+  </aside>
+
+  <main class="admin-main">
+
+    <!-- PRODUCTS -->
+    <section class="tab-panel" id="tab-products">
+      <div class="panel-header">
+        <h1>Products</h1>
+        <button class="btn-primary" id="newProductBtn">+ New Product</button>
+      </div>
+      <div id="productList" class="product-table"></div>
+    </section>
+
+    <!-- PRODUCT EDITOR (hidden until opened) -->
+    <section class="tab-panel hidden" id="tab-product-editor">
+      <div class="panel-header">
+        <h1 id="editorTitle">New Product</h1>
+        <button class="btn-secondary" id="backToProducts">&larr; Back to Products</button>
+      </div>
+      <form id="productForm" class="form-grid">
+        <input type="hidden" id="productId">
+        <label>Name<input type="text" id="pName" required></label>
+        <label>Category<input type="text" id="pCategory" placeholder="hoodies / tees / accessories"></label>
+        <label>Price ($)<input type="number" id="pPrice" required></label>
+        <label>Old Price ($, optional)<input type="number" id="pOldPrice"></label>
+        <label>Badge<input type="text" id="pBadge" placeholder="New / Limited / (blank)"></label>
+        <label>Sizes (comma separated)<input type="text" id="pSizes" placeholder="S, M, L, XL"></label>
+        <label class="full">Description<textarea id="pDescription" rows="3"></textarea></label>
+        <label class="full">Product Photos (front/back/side — upload multiple)
+          <input type="file" id="pImages" multiple accept="image/*">
+        </label>
+        <div class="full" id="pImagePreview"></div>
+        <label class="full">Printify Product ID (optional — links this to your Printify catalog for production)
+          <input type="text" id="pPrintifyId" placeholder="Connect Printify in Store Settings first">
+        </label>
+        <div class="full form-actions">
+          <button type="submit" class="btn-primary">Save Product</button>
+          <button type="button" class="btn-danger" id="deleteProductBtn" style="display:none;">Delete</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ORDERS -->
+    <section class="tab-panel hidden" id="tab-orders">
+      <div class="panel-header"><h1>Orders</h1></div>
+      <div id="orderList" class="product-table"></div>
+    </section>
+
+    <!-- CUSTOMERS -->
+    <section class="tab-panel hidden" id="tab-customers">
+      <div class="panel-header"><h1>Customers</h1></div>
+      <div id="customerList" class="product-table"></div>
+    </section>
+
+    <!-- SITE DESIGN -->
+    <section class="tab-panel hidden" id="tab-design">
+      <div class="panel-header"><h1>Site Design</h1></div>
+      <form id="designForm" class="form-grid">
+        <label>Background Color<input type="color" id="themeBg"></label>
+        <label>Text/Ink Color<input type="color" id="themeInk"></label>
+        <label>Accent Color<input type="color" id="themeAccent"></label>
+        <label class="full"><input type="checkbox" id="tickerEnabled"> Show scrolling top ticker</label>
+        <label class="full">Ticker text (leave blank for logo-only)<input type="text" id="tickerText" placeholder="e.g. FREE SHIPPING OVER $50"></label>
+        <label>Ticker Speed (seconds — lower = faster)<input type="number" id="tickerSpeed" min="4" max="60"></label>
+        <label>Ticker Logo Size (px)<input type="number" id="tickerLogoSize" min="10" max="80"></label>
+        <label class="full">Hero Headline<input type="text" id="heroHeadline"></label>
+        <label class="full">Hero Subtext<input type="text" id="heroSubtext"></label>
+        <div class="full form-actions"><button type="submit" class="btn-primary">Save Design</button></div>
+      </form>
+    </section>
+
+    <!-- STORE SETTINGS -->
+    <section class="tab-panel hidden" id="tab-settings">
+      <div class="panel-header"><h1>Store Settings</h1></div>
+      <form id="settingsForm" class="form-grid">
+        <h3 class="full">Social Links</h3>
+        <label>YouTube<input type="text" id="socialYoutube" placeholder="https://youtube.com/@..."></label>
+        <label>TikTok<input type="text" id="socialTiktok" placeholder="https://tiktok.com/@..."></label>
+        <label>Instagram<input type="text" id="socialInstagram" placeholder="https://instagram.com/..."></label>
+        <label>Twitter / X<input type="text" id="socialTwitter" placeholder="https://x.com/..."></label>
+        <div class="full form-actions"><button type="submit" class="btn-primary">Save Settings</button></div>
+      </form>
+    </section>
+
+    <!-- INTEGRATIONS -->
+    <section class="tab-panel hidden" id="tab-integrations">
+      <div class="panel-header"><h1>Integrations</h1></div>
+      <form id="integrationsForm" class="form-grid">
+        <h3 class="full">Paystack (checkout)</h3>
+        <label>Secret Key<input type="password" id="paystackSecretKey" placeholder="sk_test_..."></label>
+        <label>Public Key<input type="password" id="paystackPublicKey" placeholder="pk_test_..."></label>
+        <div class="full connection-status" id="paystackStatus"></div>
+        <div class="full"><button type="button" class="btn-secondary" id="checkPaystackBtn">Check Connection</button></div>
+
+        <h3 class="full">Printify (production)</h3>
+        <label>API Token<input type="password" id="printifyApiToken" placeholder="Printify API token"></label>
+        <label>Shop ID<input type="text" id="printifyShopId" placeholder="e.g. 12345678"></label>
+        <div class="full connection-status" id="printifyStatus"></div>
+        <div class="full"><button type="button" class="btn-secondary" id="checkPrintifyBtn">Check Connection</button></div>
+
+        <h3 class="full">Cloudinary (photo storage)</h3>
+        <label>Cloud Name<input type="text" id="cloudinaryCloudName"></label>
+        <label>API Key<input type="password" id="cloudinaryApiKey"></label>
+        <label>API Secret<input type="password" id="cloudinaryApiSecret"></label>
+
+        <h3 class="full">Anthropic (AI Assistant tab)</h3>
+        <label class="full">API Key<input type="password" id="anthropicApiKey" placeholder="sk-ant-..."></label>
+
+        <p class="full hint">Leave any field blank to keep using the value already set in Render's Environment Variables (if you set one there). Typing a new value here overrides it — you never need to touch Render again after this.</p>
+        <div class="full form-actions"><button type="submit" class="btn-primary">Save Integrations</button></div>
+      </form>
+    </section>
+
+    <!-- AI ASSISTANT -->
+    <section class="tab-panel hidden" id="tab-ai">
+      <div class="panel-header"><h1>AI Assistant</h1></div>
+      <div class="ai-chat">
+        <div class="ai-messages" id="aiMessages"></div>
+        <form id="aiForm" class="ai-input-row">
+          <input type="text" id="aiInput" placeholder="Ask for help writing a product description, editing copy, or anything else...">
+          <button type="submit" class="btn-primary">Send</button>
+        </form>
+      </div>
+    </section>
+
+  </main>
+</div>
+<script src="admin.js"></script>
+</body>
+</html>

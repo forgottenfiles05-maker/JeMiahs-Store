@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JeMiahŝ Admin — Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body class="login-body">
+  <form class="login-card" id="loginForm">
+    <h1>JeMiahŝ Admin</h1>
+    <p class="login-sub">Log in to manage your store</p>
+    <input type="text" id="username" placeholder="Username" autocomplete="username" required>
+    <input type="password" id="password" placeholder="Password" autocomplete="current-password" required>
+    <button type="submit">Log In</button>
+    <p class="login-error" id="loginError"></p>
+  </form>
+  <script>
+    document.getElementById('loginForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const res = await fetch('/api/admin/login', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ username, password })
+      });
+      if (res.ok) { window.location.href = '/admin-dashboard.html'; }
+      else { document.getElementById('loginError').textContent = 'Invalid username or password.'; }
+    };
+  </script>
+</body>
+</html>
